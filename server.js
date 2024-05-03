@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // 임시 데이터베이스 대신 배열 사용
 let posts = [];
@@ -33,7 +33,7 @@ app.get('/posts/:id', (req, res) => {
   const postId = parseInt(req.params.id);
   const post = posts.find(post => post.id === postId);
   if (!post) {
-    res.status(404).send('게시물을 찾을 수 없습니다.');
+    res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
   } else {
     res.json(post);
   }
@@ -45,7 +45,7 @@ app.put('/posts/:id', (req, res) => {
   const { title, content } = req.body;
   const postIndex = posts.findIndex(post => post.id === postId);
   if (postIndex === -1) {
-    res.status(404).send('게시물을 찾을 수 없습니다.');
+    res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
   } else {
     posts[postIndex] = { ...posts[postIndex], title, content };
     res.json(posts[postIndex]);
@@ -57,7 +57,7 @@ app.delete('/posts/:id', (req, res) => {
   const postId = parseInt(req.params.id);
   const postIndex = posts.findIndex(post => post.id === postId);
   if (postIndex === -1) {
-    res.status(404).send('게시물을 찾을 수 없습니다.');
+    res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
   } else {
     posts.splice(postIndex, 1);
     res.status(204).send();
@@ -68,3 +68,4 @@ app.delete('/posts/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
